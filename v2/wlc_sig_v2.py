@@ -385,7 +385,7 @@ def wlc_formal_sign(M, PK, SK_pi, pi):
 
 def wlc_formal_vrf(M, PK, sigma):
     s_array, L_array, R_array, I_array, NISA_pi = sigma[0], sigma[1], sigma[2], sigma[3], sigma[4]
-    n, m = len(PK), len(PK[pi])
+    n, m = len(PK), len(PK[0])
     H_array = [[None] * m] * n
     for i in range(n):
         for j in range(m):
@@ -414,8 +414,8 @@ def wlc_formal_vrf(M, PK, sigma):
     return NISA_vrf(g_list, P, c, NISA_pi)
     
 if __name__ == '__main__':
-    # relic.bn_print(byref(p))
-    # print(hex(p_pytype)[2:])
+    relic.bn_print(byref(p))
+    print(hex(p_pytype)[2:])
 
     PK_num, m = 20, 10
     SK_pi = [None] * m
@@ -491,13 +491,14 @@ if __name__ == '__main__':
     sign_cost, vrf_cost = 0, 0
     for k in range(time_trail):
         rand_pi = secrets.randbelow(PK_num)
+        SK_pi = SK_set[rand_pi]
         start_time = time.time()
-        sigma = wlc_formal_sign("F0r_wlc_formal_t3st1nG", PK_set, SK_pi, pi)
+        sigma = wlc_formal_sign("F0r_wlc_formal_t3st1nG", PK_set, SK_pi, rand_pi)
         end_time = time.time()
         sign_cost += (end_time - start_time)
         start_time = time.time()
         wlc_formal_vrf("F0r_wlc_formal_t3st1nG", PK_set, sigma)
         end_time = time.time()
         vrf_cost += (end_time - start_time)
-    print('Average sign_cost (with NISA, n=32, m=20):', sign_cost / time_trail, 's')
-    print('Average vrf_cost (with NISA, n=32, m=20):', vrf_cost / time_trail, 's')
+    print('Average sign_cost (with NISA, n={}, m={}):'.format(PK_num, m), sign_cost / time_trail, 's')
+    print('Average vrf_cost (with NISA, n={}, m={}):'.format(PK_num, m), vrf_cost / time_trail, 's')
